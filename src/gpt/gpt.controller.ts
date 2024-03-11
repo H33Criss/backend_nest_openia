@@ -16,8 +16,19 @@ export class GptController {
     return this.gptService.prosConsDiscusser(prosConsDiscusserDto);
   }
   @Post('translate')
-  translateText(@Body() translateDto: TranslateDto) {
-    return this.gptService.translate(translateDto);
+  async translateText(
+    @Body() translateDto: TranslateDto,
+    @Res() res: Response,
+  ) {
+    const stream = await this.gptService.translate(translateDto);
+    res.setHeader('Content-Type', 'application/json');
+    res.status(HttpStatus.OK);
+    for await (const chunk of stream) {
+      const piece = chunk.choices[0].delta.content || '';
+      res.write(piece);
+    }
+
+    res.end();
   }
   @Post('pros-cons-discusser-stream')
   async prosConsDiscusserStream(
@@ -32,7 +43,6 @@ export class GptController {
 
     for await (const chunk of stream) {
       const piece = chunk.choices[0].delta.content || '';
-      console.log(piece);
       res.write(piece);
     }
 

@@ -8,7 +8,7 @@ interface Options {
 export const translateUseCase = async (openai: OpenAI, options: Options) => {
   const { prompt, lang } = options;
 
-  const response = await openai.chat.completions.create({
+  return await openai.chat.completions.create({
     messages: [
       {
         role: 'system',
@@ -16,13 +16,9 @@ export const translateUseCase = async (openai: OpenAI, options: Options) => {
       },
       { role: 'user', content: prompt },
     ],
-    // stream: true,
+    stream: true,
     model: 'gpt-3.5-turbo-1106',
     temperature: 0.7,
+    max_tokens: 500,
   });
-
-  return {
-    message: response.choices[0].message.content,
-    lang,
-  };
 };
