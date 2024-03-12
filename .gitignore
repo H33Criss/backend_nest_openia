@@ -1,5 +1,9 @@
 .env
 
+#Excluyendo contenido generado
+/generated/*
+!/generated/.gitkeep
+
 # compiled output
 /dist
 /node_modules
